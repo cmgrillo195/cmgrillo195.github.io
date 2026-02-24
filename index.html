@@ -150,7 +150,7 @@
   }
 
   .hero-role-wrap {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 28px;
+    display: flex; align-items: center; gap: 10px; margin-bottom: 36px;
     opacity: 0; animation: fadeUp 0.7s 0.4s forwards; height: 36px;
   }
   .hero-role-prefix { font-size: 1rem; color: var(--dim); }
@@ -162,13 +162,9 @@
   }
   @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
 
-  .hero-desc {
-    font-size: 1rem; line-height: 1.75; color: var(--dim); max-width: 480px; margin-bottom: 44px;
-    opacity: 0; animation: fadeUp 0.7s 0.55s forwards;
-  }
   .hero-ctas {
     display: flex; gap: 14px; flex-wrap: wrap;
-    opacity: 0; animation: fadeUp 0.7s 0.7s forwards;
+    opacity: 0; animation: fadeUp 0.7s 0.55s forwards;
   }
 
   .btn-glow {
@@ -202,13 +198,6 @@
     border-radius: 24px; position: relative; z-index: 2;
     border: 1px solid rgba(255,255,255,0.1);
   }
-  .hero-photo-glow {
-    position: absolute; inset: -20px; border-radius: 36px;
-    background: conic-gradient(from 0deg, var(--c1), var(--c2), var(--c3), var(--c5), var(--c1));
-    filter: blur(30px); opacity: 0.4; z-index: 1;
-    animation: spin 8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
 
   .stat-pill {
     position: absolute;
@@ -473,6 +462,9 @@
     </div>
   </div>
 
+  <div class="hero-right">
+    <div class="hero-photo-wrap">
+      <img src="headshot.jpeg" alt="Marin Grillo">
     </div>
     <div class="stat-pill stat-pill-1">
       <span class="stat-pill-emoji">🚀</span>
@@ -590,7 +582,7 @@
       </div>
     </div>
 
-    <!-- FIGMA Sr AE — spans 2 cols -->
+    <!-- FIGMA Sr AE -->
     <div class="exp-card reveal" style="--card-accent: var(--c1); grid-column: span 2; transition-delay:0.1s">
       <div class="exp-company-badge badge-figma">✏️ Figma</div>
       <div class="exp-role-title">Senior Account Executive, SMB</div>
@@ -622,7 +614,7 @@
   <div class="contact-left reveal">
     <div class="section-eyebrow">Contact</div>
     <h2 class="section-title">Ready to build <span class="grad">something great?</span></h2>
-    <p>I'm heads-down at Box and Figma, but always open to thoughtful conversations about the future. If you're building a GTM team that values sharp positioning and customer-first thinking, feel free to reach out.</p>
+    <p>I'm heads-down at Box, but always open to thoughtful conversations. If you're building a GTM team that values sharp positioning and customer-first thinking, feel free to reach out.</p>
     <div class="contact-links">
       <a href="mailto:maringrillo@outlook.com" class="contact-link">
         <div class="cl-icon">✉</div>
@@ -676,62 +668,73 @@
   // CURSOR
   const cursor = document.getElementById('cursor');
   const ring = document.getElementById('cursorRing');
-  let mx=0,my=0,rx=0,ry=0;
+  let mx=0, my=0, rx=0, ry=0;
   document.addEventListener('mousemove', e => {
-    mx=e.clientX; my=e.clientY;
-    cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
   });
-  (function animRing(){
-    rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
-    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  (function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
     requestAnimationFrame(animRing);
   })();
 
   // MOUSE ORB
-  const orb=document.getElementById('mouseOrb');
-  document.addEventListener('mousemove',e=>{
-    orb.style.left=e.clientX+'px'; orb.style.top=e.clientY+'px';
+  const mouseOrb = document.getElementById('mouseOrb');
+  document.addEventListener('mousemove', e => {
+    mouseOrb.style.left = e.clientX + 'px';
+    mouseOrb.style.top = e.clientY + 'px';
   });
 
   // ROLE TYPER
-  const roles=[
+  const roles = [
     'GTM strategies that convert.',
     'messaging that resonates.',
     'narratives that close deals.',
     'positioning with purpose.',
     'launches that drive pipeline.'
   ];
-  const roleEl=document.getElementById('heroRole');
-  let ri=0,ci=0,deleting=false;
-  function typeRole(){
-    const cur=roles[ri];
-    if(!deleting){
-      roleEl.textContent=cur.slice(0,ci+1);
+  const roleEl = document.getElementById('heroRole');
+  let ri = 0, ci = 0, deleting = false;
+  function typeRole() {
+    const cur = roles[ri];
+    if (!deleting) {
+      roleEl.textContent = cur.slice(0, ci + 1);
       ci++;
-      if(ci===cur.length){ setTimeout(()=>{ deleting=true; typeRole(); },2200); return; }
-      setTimeout(typeRole,55);
+      if (ci === cur.length) {
+        setTimeout(() => { deleting = true; typeRole(); }, 2200);
+        return;
+      }
+      setTimeout(typeRole, 55);
     } else {
-      roleEl.textContent=cur.slice(0,ci-1);
+      roleEl.textContent = cur.slice(0, ci - 1);
       ci--;
-      if(ci===0){ deleting=false; ri=(ri+1)%roles.length; }
-      setTimeout(typeRole,28);
+      if (ci === 0) { deleting = false; ri = (ri + 1) % roles.length; }
+      setTimeout(typeRole, 28);
     }
   }
-  setTimeout(typeRole,1400);
+  setTimeout(typeRole, 1400);
 
   // SCROLL REVEAL
-  const obs=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
-  },{threshold:0.08,rootMargin:'0px 0px -40px 0px'});
-  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
   // FORM
-  function handleSubmit(e){
+  function handleSubmit(e) {
     e.preventDefault();
-    const btn=e.target.querySelector('button');
-    btn.textContent='🎉 Sent! Talk soon.';
-    btn.style.background='linear-gradient(135deg,#06D6A0,#00a880)';
-    setTimeout(()=>{ btn.textContent='Send Message'; btn.style.background=''; e.target.reset(); },3500);
+    const btn = e.target.querySelector('button');
+    btn.textContent = '🎉 Sent! Talk soon.';
+    btn.style.background = 'linear-gradient(135deg, #06D6A0, #00a880)';
+    setTimeout(() => {
+      btn.textContent = 'Send Message';
+      btn.style.background = '';
+      e.target.reset();
+    }, 3500);
   }
 </script>
 </body>
