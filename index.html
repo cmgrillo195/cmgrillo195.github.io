@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marin Grillo — GTM Strategist</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.09);
+    --white: #F0EEF8;
+    --dim: rgba(240,238,248,0.5);
+    --c1: #FF6B9D;
+    --c2: #7B5EA7;
+    --c3: #4FC3F7;
+    --c4: #FFD166;
+    --c5: #06D6A0;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CURSOR */
+  .cursor {
+    position: fixed; width: 10px; height: 10px;
+    background: var(--c1); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed; width: 36px; height: 36px;
+    border: 1.5px solid rgba(255,107,157,0.5); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    mix-blend-mode: screen;
+  }
+
+  /* ANIMATED BACKGROUND */
+  .bg-canvas {
+    position: fixed; inset: 0; z-index: 0;
+    overflow: hidden; pointer-events: none;
+  }
+  .orb {
+    position: absolute; border-radius: 50%;
+    filter: blur(90px); opacity: 0.3;
+    animation: drift linear infinite;
+  }
+  .orb-1 { width: 700px; height: 700px; background: var(--c2); top: -250px; left: -150px; animation-duration: 22s; }
+  .orb-2 { width: 550px; height: 550px; background: var(--c1); top: 15%; right: -180px; animation-duration: 28s; animation-delay: -9s; }
+  .orb-3 { width: 450px; height: 450px; background: var(--c3); bottom: 5%; left: 15%; animation-duration: 20s; animation-delay: -5s; }
+  .orb-4 { width: 380px; height: 380px; background: var(--c5); bottom: -80px; right: 5%; animation-duration: 24s; animation-delay: -13s; }
+  .orb-5 { width: 320px; height: 320px; background: var(--c4); top: 45%; left: 45%; animation-duration: 32s; animation-delay: -7s; }
+
+  @keyframes drift {
+    0%   { transform: translate(0,0) scale(1); }
+    25%  { transform: translate(70px,-90px) scale(1.06); }
+    50%  { transform: translate(-50px,70px) scale(0.94); }
+    75%  { transform: translate(90px,50px) scale(1.08); }
+    100% { transform: translate(0,0) scale(1); }
+  }
+
+  /* Mouse-follow orb */
+  .mouse-orb {
+    position: fixed; width: 500px; height: 500px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(123,94,167,0.2) 0%, transparent 70%);
+    pointer-events: none; z-index: 1;
+    transform: translate(-50%,-50%);
+    transition: left 0.7s cubic-bezier(0.23,1,0.32,1), top 0.7s cubic-bezier(0.23,1,0.32,1);
+  }
+
+  nav, section, footer { position: relative; z-index: 2; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 22px 56px;
+    background: rgba(10,10,15,0.75);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+    letter-spacing: 0.04em; color: var(--white); text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--dim); text-decoration: none; transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0; right: 100%;
+    height: 1px; background: var(--c1); transition: right 0.25s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a:hover::after { right: 0; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center;
+    padding: 100px 56px 60px; gap: 60px;
+  }
+  .hero-left { flex: 1; max-width: 600px; }
+
+  .hero-eyebrow {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 28px;
+    opacity: 0; animation: fadeUp 0.7s 0.1s forwards;
+  }
+  .hero-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--c5); box-shadow: 0 0 12px var(--c5);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50% { opacity:0.6; transform:scale(0.85); }
+  }
+  .hero-eyebrow span {
+    font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--c5);
+  }
+
+  .hero-name {
+    font-family: 'Syne', sans-serif; font-size: clamp(3.2rem,6vw,6.5rem);
+    font-weight: 800; line-height: 0.93; letter-spacing: -0.03em; margin-bottom: 32px;
+    opacity: 0; animation: fadeUp 0.7s 0.25s forwards;
+  }
+  .hero-name .line-2 {
+    background: linear-gradient(135deg, var(--c1), var(--c2), var(--c3));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; background-size: 200% 200%;
+    animation: gradShift 4s ease-in-out infinite;
+  }
+  @keyframes gradShift {
+    0%,100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .hero-role-wrap {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 28px;
+    opacity: 0; animation: fadeUp 0.7s 0.4s forwards; height: 36px;
+  }
+  .hero-role-prefix { font-size: 1rem; color: var(--dim); }
+  .hero-role-text {
+    font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 600; color: var(--white);
+  }
+  .hero-role-text::after {
+    content: '|'; margin-left: 2px; color: var(--c1); animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+
+  .hero-desc {
+    font-size: 1rem; line-height: 1.75; color: var(--dim); max-width: 480px; margin-bottom: 44px;
+    opacity: 0; animation: fadeUp 0.7s 0.55s forwards;
+  }
+  .hero-ctas {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    opacity: 0; animation: fadeUp 0.7s 0.7s forwards;
+  }
+
+  .btn-glow {
+    display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px;
+    background: linear-gradient(135deg, var(--c1), var(--c2));
+    color: #fff; font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
+    font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+    text-decoration: none; border-radius: 100px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 24px rgba(255,107,157,0.3); border: none; cursor: none;
+  }
+  .btn-glow:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(255,107,157,0.45); }
+
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px; padding: 13px 28px;
+    border: 1px solid var(--border); color: var(--white);
+    font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 400;
+    letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none;
+    border-radius: 100px; transition: all 0.2s; background: transparent; cursor: none;
+  }
+  .btn-ghost:hover { border-color: var(--c3); color: var(--c3); transform: translateY(-3px); }
+
+  /* HERO RIGHT */
+  .hero-right {
+    flex-shrink: 0; position: relative;
+    opacity: 0; animation: fadeIn 1s 0.5s forwards;
+  }
+  .hero-photo-wrap { position: relative; width: 360px; height: 440px; }
+  .hero-photo-wrap img {
+    width: 100%; height: 100%; object-fit: cover; object-position: center top;
+    border-radius: 24px; position: relative; z-index: 2;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .hero-photo-glow {
+    position: absolute; inset: -20px; border-radius: 36px;
+    background: conic-gradient(from 0deg, var(--c1), var(--c2), var(--c3), var(--c5), var(--c1));
+    filter: blur(30px); opacity: 0.4; z-index: 1;
+    animation: spin 8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .stat-pill {
+    position: absolute;
+    background: rgba(10,10,15,0.85); backdrop-filter: blur(16px);
+    border: 1px solid var(--border); border-radius: 100px;
+    padding: 10px 18px; display: flex; align-items: center; gap: 10px;
+    z-index: 10; white-space: nowrap; animation: float ease-in-out infinite;
+  }
+  .stat-pill-1 { top: 24px; right: -60px; animation-duration: 3.5s; }
+  .stat-pill-2 { bottom: 60px; left: -80px; animation-duration: 4s; animation-delay: -1.5s; }
+  .stat-pill-3 { bottom: -20px; right: -40px; animation-duration: 3s; animation-delay: -0.8s; }
+  @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
+
+  .stat-pill-emoji { font-size: 1.1rem; }
+  .stat-pill-val { font-family:'Syne',sans-serif; font-size:0.9rem; font-weight:700; color:var(--white); display:block; }
+  .stat-pill-lbl { font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--dim); display:block; }
+
+  /* SECTIONS */
+  section { padding: 100px 56px; }
+
+  .section-eyebrow {
+    font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--c3); margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+  }
+  .section-eyebrow::before {
+    content: ''; display: inline-block; width: 24px; height: 1px; background: var(--c3);
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif; font-size: clamp(2rem,3vw,3rem);
+    font-weight: 700; line-height: 1.1; margin-bottom: 28px; letter-spacing: -0.02em;
+  }
+  .grad {
+    background: linear-gradient(90deg, var(--c4), var(--c1));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  /* ABOUT */
+  #about { background: transparent; }
+  .about-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+  .about-text p { font-size: 0.97rem; line-height: 1.8; color: var(--dim); margin-bottom: 18px; }
+
+  .skill-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+  .chip {
+    padding: 7px 16px; border-radius: 100px; font-size: 0.7rem;
+    letter-spacing: 0.08em; font-weight: 500; border: 1px solid; transition: all 0.2s; cursor: default;
+  }
+  .chip:hover { transform: translateY(-2px); }
+  .chip-pink { border-color: var(--c1); color: var(--c1); }
+  .chip-pink:hover { background: rgba(255,107,157,0.1); }
+  .chip-blue { border-color: var(--c3); color: var(--c3); }
+  .chip-blue:hover { background: rgba(79,195,247,0.1); }
+  .chip-yellow { border-color: var(--c4); color: var(--c4); }
+  .chip-yellow:hover { background: rgba(255,209,102,0.1); }
+  .chip-purple { border-color: var(--c2); color: rgba(180,155,230,1); }
+  .chip-purple:hover { background: rgba(123,94,167,0.1); }
+  .chip-mint { border-color: var(--c5); color: var(--c5); }
+  .chip-mint:hover { background: rgba(6,214,160,0.1); }
+
+  .about-cards { display: flex; flex-direction: column; gap: 12px; }
+  .about-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px 24px;
+    display: flex; align-items: center; gap: 16px; transition: transform 0.2s, border-color 0.2s;
+  }
+  .about-card:hover { transform: translateX(6px); }
+  .ac-pink:hover { border-color: rgba(255,107,157,0.3); }
+  .ac-blue:hover { border-color: rgba(79,195,247,0.3); }
+  .ac-mint:hover { border-color: rgba(6,214,160,0.3); }
+  .ac-yellow:hover { border-color: rgba(255,209,102,0.3); }
+  .about-card-icon {
+    font-size: 1.4rem; width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 12px; flex-shrink: 0;
+  }
+  .ac-pink .about-card-icon { background: rgba(255,107,157,0.12); }
+  .ac-blue .about-card-icon { background: rgba(79,195,247,0.12); }
+  .ac-mint .about-card-icon { background: rgba(6,214,160,0.12); }
+  .ac-yellow .about-card-icon { background: rgba(255,209,102,0.12); }
+  .about-card-label { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); margin-bottom: 2px; }
+  .about-card-value { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--white); }
+
+  /* EXPERIENCE */
+  .exp-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 56px; flex-wrap: wrap; gap: 20px;
+  }
+  .exp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .exp-card-wide { grid-column: 1 / -1; }
+
+  .exp-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 32px; position: relative; overflow: hidden;
+    transition: transform 0.25s, border-color 0.25s;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .exp-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--card-accent, var(--c1)); opacity: 0; transition: opacity 0.25s;
+  }
+  .exp-card:hover { transform: translateY(-6px); border-color: rgba(255,255,255,0.15); }
+  .exp-card:hover::before { opacity: 1; }
+
+  .exp-card-wide { flex-direction: row; align-items: flex-start; gap: 40px; }
+  .exp-card-wide .exp-card-body { flex: 1; display: flex; flex-direction: column; gap: 0; }
+
+  .exp-company-badge {
+    display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px;
+    border-radius: 100px; font-size: 0.7rem; font-weight: 600;
+    font-family: 'Syne', sans-serif; letter-spacing: 0.06em; margin-bottom: 12px;
+  }
+  .badge-box { background: rgba(79,195,247,0.12); color: var(--c3); border: 1px solid rgba(79,195,247,0.2); }
+  .badge-figma { background: rgba(255,107,157,0.12); color: var(--c1); border: 1px solid rgba(255,107,157,0.2); }
+
+  .exp-role-title {
+    font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700;
+    color: var(--white); margin-bottom: 8px; line-height: 1.3;
+  }
+  .exp-date-badge {
+    font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--dim); margin-bottom: 16px; display: flex; align-items: center; gap: 6px;
+  }
+  .exp-date-badge::before {
+    content: ''; width: 4px; height: 4px; border-radius: 50%;
+    background: var(--c5); box-shadow: 0 0 6px var(--c5); flex-shrink: 0;
+  }
+  .exp-summary { font-size: 0.88rem; line-height: 1.7; color: var(--dim); flex: 1; }
+  .exp-metric {
+    display: flex; align-items: flex-end; gap: 6px; flex-wrap: wrap;
+    margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border);
+  }
+  .metric-chip {
+    display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
+    border-radius: 8px; font-size: 0.75rem; font-family: 'Syne', sans-serif; font-weight: 700;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--white);
+  }
+
+  .exp-card-side {
+    display: flex; flex-direction: column; gap: 12px; min-width: 200px; flex-shrink: 0;
+  }
+  .side-stat {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px 20px; text-align: center; transition: border-color 0.2s;
+  }
+  .exp-card:hover .side-stat { border-color: rgba(255,255,255,0.12); }
+  .side-stat-num {
+    font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; line-height: 1; margin-bottom: 4px;
+  }
+  .side-stat-lbl { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); }
+
+  /* CONTACT */
+  #contact { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .contact-left .section-title { margin-bottom: 20px; }
+  .contact-left p { font-size: 0.95rem; line-height: 1.75; color: var(--dim); margin-bottom: 36px; }
+  .contact-links { display: flex; flex-direction: column; gap: 12px; }
+  .contact-link {
+    display: flex; align-items: center; gap: 16px; padding: 16px 20px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; text-decoration: none; color: var(--white); transition: all 0.2s;
+  }
+  .contact-link:hover { border-color: var(--c1); transform: translateX(6px); }
+  .contact-link:hover .cl-icon { background: rgba(255,107,157,0.15); }
+  .cl-icon {
+    width: 40px; height: 40px; background: rgba(255,255,255,0.05);
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0; transition: background 0.2s;
+  }
+  .cl-label { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); display: block; margin-bottom: 2px; }
+  .cl-value { font-size: 0.9rem; }
+
+  .contact-form-wrap {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 24px; padding: 40px;
+  }
+  .form-title { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 28px; }
+  .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .form-label { font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
+  .form-input, .form-textarea {
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    border-radius: 10px; padding: 13px 16px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 300;
+    color: var(--white); outline: none; transition: border-color 0.2s; resize: none;
+  }
+  .form-input:focus, .form-textarea:focus { border-color: var(--c2); }
+  .form-input::placeholder, .form-textarea::placeholder { color: rgba(240,238,248,0.25); }
+  .form-textarea { height: 110px; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border); padding: 28px 56px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.7rem; letter-spacing: 0.08em; color: rgba(240,238,248,0.25);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  .reveal { opacity: 0; transform: translateY(36px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* RESPONSIVE */
+  @media (max-width: 960px) {
+    nav { padding: 18px 24px; }
+    .hero { flex-direction: column; padding: 100px 24px 80px; }
+    .hero-photo-wrap { width: 300px; height: 360px; }
+    .stat-pill { display: none; }
+    .bg-canvas { display: none; }
+    .mouse-orb { display: none; }
+    section { padding: 80px 24px; }
+    .about-inner { grid-template-columns: 1fr; }
+    .exp-grid { grid-template-columns: 1fr; }
+    .exp-card-wide { flex-direction: column; }
+    .exp-card-wide .exp-card-side { min-width: auto; flex-direction: row; flex-wrap: wrap; }
+    #contact { grid-template-columns: 1fr; }
+    footer { padding: 24px; flex-direction: column; gap: 8px; text-align: center; }
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<div class="bg-canvas">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+  <div class="orb orb-5"></div>
+</div>
+<div class="mouse-orb" id="mouseOrb"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">CMG</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <div class="hero-dot"></div>
+      <span>GTM Strategist · NYC</span>
+    </div>
+    <h1 class="hero-name">
+      <span class="line-1">Marin</span><br>
+      <span class="line-2">Grillo</span>
+    </h1>
+    <div class="hero-role-wrap">
+      <span class="hero-role-prefix">I build&nbsp;</span>
+      <span class="hero-role-text" id="heroRole">GTM strategies that convert.</span>
+    </div>
+    <div class="hero-ctas">
+      <a href="#experience" class="btn-glow">See My Work ↓</a>
+      <a href="mailto:maringrillo@outlook.com" class="btn-ghost">Let's Talk ✉</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-photo-wrap">
+      <div class="hero-photo-glow"></div>
+      <img src="headshot.jpeg" alt="Marin Grillo">
+    </div>
+    <div class="stat-pill stat-pill-1">
+      <span class="stat-pill-emoji">🚀</span>
+      <div>
+        <span class="stat-pill-val">$50M+</span>
+        <span class="stat-pill-lbl">Pipeline Driven</span>
+      </div>
+    </div>
+    <div class="stat-pill stat-pill-2">
+      <span class="stat-pill-emoji">🎯</span>
+      <div>
+        <span class="stat-pill-val">135%</span>
+        <span class="stat-pill-lbl">Quota Attainment</span>
+      </div>
+    </div>
+    <div class="stat-pill stat-pill-3">
+      <span class="stat-pill-emoji">💰</span>
+      <div>
+        <span class="stat-pill-val">$1M+</span>
+        <span class="stat-pill-lbl">Closed Won ARR</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-inner">
+    <div class="reveal">
+      <div class="section-eyebrow">About Me</div>
+      <h2 class="section-title">Experienced storyteller who's <span class="grad">lived the funnel.</span></h2>
+      <div class="about-text">
+        <p>I'm a GTM strategist and storyteller who bridges the gap between product and market. My background is rooted in enterprise sales — but what drives me is the craft behind the message: the positioning that earns trust, the narrative that reframes a problem, the copy that makes a buyer feel understood before they've said a word.</p>
+        <p>At Box and Figma I've seen firsthand how the right story changes the arc of a deal. I write messaging frameworks, build enablement content, and shape launch narratives that work in the wild — not just in decks. My edge is that I've been in the room when messaging lands, and when it doesn't.</p>
+      </div>
+      <div class="skill-chips">
+        <span class="chip chip-pink">Product Positioning</span>
+        <span class="chip chip-blue">GTM Strategy</span>
+        <span class="chip chip-yellow">Launch Planning</span>
+        <span class="chip chip-mint">Sales Enablement</span>
+        <span class="chip chip-purple">Messaging Frameworks</span>
+        <span class="chip chip-pink">Persona Storytelling</span>
+        <span class="chip chip-blue">Cross-functional Alignment</span>
+        <span class="chip chip-yellow">Salesforce</span>
+        <span class="chip chip-mint">Figma</span>
+        <span class="chip chip-purple">Tableau</span>
+      </div>
+    </div>
+    <div class="about-cards reveal" style="transition-delay:0.15s">
+      <div class="about-card ac-pink">
+        <div class="about-card-icon">🏙️</div>
+        <div>
+          <div class="about-card-label">Location</div>
+          <div class="about-card-value">New York, NY</div>
+        </div>
+      </div>
+      <div class="about-card ac-blue">
+        <div class="about-card-icon">💼</div>
+        <div>
+          <div class="about-card-label">Current Role</div>
+          <div class="about-card-value">GTM Strategy @ Box</div>
+        </div>
+      </div>
+      <div class="about-card ac-mint">
+        <div class="about-card-icon">🎓</div>
+        <div>
+          <div class="about-card-label">Education</div>
+          <div class="about-card-value">Syracuse University</div>
+        </div>
+      </div>
+      <div class="about-card ac-yellow">
+        <div class="about-card-icon">🌐</div>
+        <div>
+          <div class="about-card-label">Languages</div>
+          <div class="about-card-value">English · Spanish</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="exp-header reveal">
+    <div>
+      <div class="section-eyebrow">Experience</div>
+      <h2 class="section-title" style="margin-bottom:0">Where <span class="grad">results</span> live.</h2>
+    </div>
+    <a href="mailto:maringrillo@outlook.com" class="btn-ghost" style="height:fit-content">Request Full Resume</a>
+  </div>
+
+  <div class="exp-grid">
+    <!-- BOX wide -->
+    <div class="exp-card exp-card-wide reveal" style="--card-accent: var(--c3)">
+      <div class="exp-card-body">
+        <div class="exp-company-badge badge-box">📦 Box</div>
+        <div class="exp-role-title">Associate GTM Strategy Manager</div>
+        <div class="exp-date-badge">Jun 2025 – Present</div>
+        <p class="exp-summary">Own product launch messaging, sales narratives, and enablement assets for Sales Plays — leading GTM execution and partnering with cross-functional teams to translate positioning into pitch decks, talk tracks, and multi-channel campaigns.</p>
+        <div class="exp-metric">
+          <div class="metric-chip">🚀 $50M+ Pipeline</div>
+          <div class="metric-chip">📣 Multi-channel Campaigns</div>
+          <div class="metric-chip">🤝 Cross-functional GTM Lead</div>
+        </div>
+      </div>
+      <div class="exp-card-side">
+        <div class="side-stat">
+          <div class="side-stat-num" style="color:var(--c3)">$50M+</div>
+          <div class="side-stat-lbl">Pipeline Influenced</div>
+        </div>
+        <div class="side-stat">
+          <div class="side-stat-num" style="color:var(--c5)">2</div>
+          <div class="side-stat-lbl">Product Launches Led</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FIGMA Sr AE — spans 2 cols -->
+    <div class="exp-card reveal" style="--card-accent: var(--c1); grid-column: span 2; transition-delay:0.1s">
+      <div class="exp-company-badge badge-figma">✏️ Figma</div>
+      <div class="exp-role-title">Senior Account Executive, SMB</div>
+      <div class="exp-date-badge">Oct 2024 – May 2025</div>
+      <p class="exp-summary">Synthesized customer feedback into GTM recommendations for Product Marketing and Demand Gen. Built content and collateral for prospecting and nurture campaigns.</p>
+      <div class="exp-metric">
+        <div class="metric-chip" style="color:var(--c1)">🎯 135% Quota Attainment</div>
+        <div class="metric-chip">💰 $465K ARR</div>
+        <div class="metric-chip">📋 Enablement Content</div>
+      </div>
+    </div>
+
+    <!-- FIGMA SDR -->
+    <div class="exp-card reveal" style="--card-accent: var(--c4); transition-delay:0.2s">
+      <div class="exp-company-badge badge-figma">✏️ Figma</div>
+      <div class="exp-role-title">Enterprise Sales Development Rep</div>
+      <div class="exp-date-badge">Jul 2023 – Oct 2024</div>
+      <p class="exp-summary">Managed enterprise portfolio with deep customer insights analysis to sharpen prospecting and positioning. Closed $536K ARR across strategic accounts.</p>
+      <div class="exp-metric">
+        <div class="metric-chip" style="color:var(--c4)">🎯 124% Quota Attainment</div>
+        <div class="metric-chip">💰 $536K ARR</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-left reveal">
+    <div class="section-eyebrow">Contact</div>
+    <h2 class="section-title">Ready to build <span class="grad">something great?</span></h2>
+    <p>I'm heads-down at Box and Figma, but always open to thoughtful conversations about the future. If you're building a GTM team that values sharp positioning and customer-first thinking, feel free to reach out.</p>
+    <div class="contact-links">
+      <a href="mailto:maringrillo@outlook.com" class="contact-link">
+        <div class="cl-icon">✉</div>
+        <div>
+          <span class="cl-label">Email</span>
+          <span class="cl-value">maringrillo@outlook.com</span>
+        </div>
+      </a>
+      <a href="tel:8589221948" class="contact-link">
+        <div class="cl-icon">📞</div>
+        <div>
+          <span class="cl-label">Phone</span>
+          <span class="cl-value">(858) 922-1948</span>
+        </div>
+      </a>
+      <a href="https://linkedin.com/in/cmgrillo" target="_blank" class="contact-link">
+        <div class="cl-icon">in</div>
+        <div>
+          <span class="cl-label">LinkedIn</span>
+          <span class="cl-value">linkedin.com/in/cmgrillo</span>
+        </div>
+      </a>
+    </div>
+  </div>
+  <div class="contact-form-wrap reveal" style="transition-delay:0.15s">
+    <div class="form-title">Drop me a note 👋</div>
+    <form onsubmit="handleSubmit(event)">
+      <div class="form-group">
+        <label class="form-label">Name</label>
+        <input class="form-input" type="text" placeholder="Your name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message</label>
+        <textarea class="form-textarea" placeholder="What's on your mind..."></textarea>
+      </div>
+      <button type="submit" class="btn-glow" style="width:100%; justify-content:center; border:none">Send Message</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <span>© 2025 Marin Grillo</span>
+  <span>New York, NY · GTM Strategist</span>
+</footer>
+
+<script>
+  // CURSOR
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => {
+    mx=e.clientX; my=e.clientY;
+    cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+  });
+  (function animRing(){
+    rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    requestAnimationFrame(animRing);
+  })();
+
+  // MOUSE ORB
+  const orb=document.getElementById('mouseOrb');
+  document.addEventListener('mousemove',e=>{
+    orb.style.left=e.clientX+'px'; orb.style.top=e.clientY+'px';
+  });
+
+  // ROLE TYPER
+  const roles=[
+    'GTM strategies that convert.',
+    'messaging that resonates.',
+    'narratives that close deals.',
+    'positioning with purpose.',
+    'launches that drive pipeline.'
+  ];
+  const roleEl=document.getElementById('heroRole');
+  let ri=0,ci=0,deleting=false;
+  function typeRole(){
+    const cur=roles[ri];
+    if(!deleting){
+      roleEl.textContent=cur.slice(0,ci+1);
+      ci++;
+      if(ci===cur.length){ setTimeout(()=>{ deleting=true; typeRole(); },2200); return; }
+      setTimeout(typeRole,55);
+    } else {
+      roleEl.textContent=cur.slice(0,ci-1);
+      ci--;
+      if(ci===0){ deleting=false; ri=(ri+1)%roles.length; }
+      setTimeout(typeRole,28);
+    }
+  }
+  setTimeout(typeRole,1400);
+
+  // SCROLL REVEAL
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+  },{threshold:0.08,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+  // FORM
+  function handleSubmit(e){
+    e.preventDefault();
+    const btn=e.target.querySelector('button');
+    btn.textContent='🎉 Sent! Talk soon.';
+    btn.style.background='linear-gradient(135deg,#06D6A0,#00a880)';
+    setTimeout(()=>{ btn.textContent='Send Message'; btn.style.background=''; e.target.reset(); },3500);
+  }
+</script>
+</body>
+</html>
