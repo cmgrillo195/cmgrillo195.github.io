@@ -26,12 +26,7 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background:
-    radial-gradient(ellipse 80% 60% at 10% 0%,   rgba(123,94,167,0.18) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 90% 20%,  rgba(255,107,157,0.12) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 40% at 15% 85%,  rgba(79,195,247,0.10) 0%, transparent 55%),
-    radial-gradient(ellipse 40% 35% at 85% 90%,  rgba(6,214,160,0.08)  0%, transparent 50%),
-    var(--bg);
+  background: var(--bg);
   color: var(--white);
   font-family: 'DM Sans', sans-serif;
   font-weight: 300;
@@ -51,7 +46,27 @@ body {
 .cur  { position:fixed; width:9px; height:9px; background:var(--c1); border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); mix-blend-mode:screen; }
 .cur-ring { position:fixed; width:34px; height:34px; border:1px solid rgba(255,107,157,0.4); border-radius:50%; pointer-events:none; z-index:9997; transform:translate(-50%,-50%); mix-blend-mode:screen; transition: width .2s,height .2s,border-color .2s; }
 
-
+/* ── AMBIENT BG ── */
+.bg-canvas { position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+.orb { position:absolute; border-radius:50%; filter:blur(100px); opacity:0.22; animation:drift linear infinite; }
+.o1 { width:680px; height:680px; background:var(--c2); top:-200px; left:-120px; animation-duration:22s; }
+.o2 { width:520px; height:520px; background:var(--c1); top:20%; right:-160px; animation-duration:28s; animation-delay:-9s; }
+.o3 { width:440px; height:440px; background:var(--c3); bottom:8%; left:12%; animation-duration:20s; animation-delay:-5s; }
+.o4 { width:360px; height:360px; background:var(--c5); bottom:-60px; right:8%; animation-duration:24s; animation-delay:-13s; }
+.o5 { width:300px; height:300px; background:var(--c4); top:48%; left:46%; animation-duration:32s; animation-delay:-7s; }
+@keyframes drift {
+  0%   { transform: translate(0,0) scale(1); }
+  25%  { transform: translate(60px,-80px) scale(1.05); }
+  50%  { transform: translate(-40px,65px) scale(0.95); }
+  75%  { transform: translate(80px,45px) scale(1.07); }
+  100% { transform: translate(0,0) scale(1); }
+}
+.mouse-orb {
+  position:fixed; width:480px; height:480px; border-radius:50%; pointer-events:none; z-index:1;
+  background: radial-gradient(circle, rgba(123,94,167,0.18) 0%, transparent 70%);
+  transform:translate(-50%,-50%);
+  transition: left .8s cubic-bezier(.23,1,.32,1), top .8s cubic-bezier(.23,1,.32,1);
+}
 
 nav, section, footer { position:relative; z-index:2; }
 
@@ -343,6 +358,7 @@ footer {
   footer { padding:20px 24px; flex-direction:column; gap:8px; text-align:center; }
   body { cursor:auto; }
   .cur,.cur-ring { display:none; }
+  .bg-canvas,.mouse-orb { display:none; }
 }
 </style>
 </head>
@@ -351,6 +367,12 @@ footer {
 <div id="progress"></div>
 <div class="cur" id="cur"></div>
 <div class="cur-ring" id="curRing"></div>
+
+<div class="bg-canvas">
+  <div class="orb o1"></div><div class="orb o2"></div>
+  <div class="orb o3"></div><div class="orb o4"></div><div class="orb o5"></div>
+</div>
+<div class="mouse-orb" id="mouseOrb"></div>
 
 <!-- NAV -->
 <nav>
@@ -380,8 +402,8 @@ footer {
     </div>
 
     <div class="hero-actions">
-      <a href="#experience" class="btn-primary">Learn more ↓</a>
-      <a href="mailto:maringrillo@outlook.com" class="btn-text">Let's connect →</a>
+      <a href="#experience" class="btn-primary">See my work ↓</a>
+      <a href="mailto:maringrillo@outlook.com" class="btn-text">Let's talk →</a>
     </div>
   </div>
 
@@ -560,6 +582,10 @@ document.addEventListener('mousemove', e => {
   cur.style.left=mx+'px'; cur.style.top=my+'px';
 });
 (function loop(){ rx+=(mx-rx)*.11; ry+=(my-ry)*.11; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(loop); })();
+
+// MOUSE ORB
+const orb = document.getElementById('mouseOrb');
+document.addEventListener('mousemove', e => { orb.style.left=e.clientX+'px'; orb.style.top=e.clientY+'px'; });
 
 // TYPEWRITER
 const words = ['narratives that close deals.','buyer profiles worth betting on.','data stories that land.','clarity around who matters most.','GTM strategies that convert.'];
